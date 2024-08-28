@@ -82,6 +82,12 @@ public class BeerClientImpl implements BeerClient {
         return getBeerById(newBeerDto.getId());
     }
 
+    @Override
+    public void deleteBeer(UUID beerId) {
+        RestTemplate restTemplate = restTemplateBuilder.build();
+        restTemplate.delete(GET_BEER_BY_ID_PATH, beerId);
+    }
+
     private void buildQueryParam(UriComponentsBuilder uriComponentsBuilder, String beerName, BeerStyle beerStyle, Boolean showInventory, Integer pageNumber, Integer pageSize) {
         if (beerName != null) {
             uriComponentsBuilder.queryParam("beerName", beerName);
