@@ -3,7 +3,6 @@ package com.study.resttemplatetest.client;
 import com.study.resttemplatetest.model.BeerDto;
 import com.study.resttemplatetest.model.BeerDtoPage;
 import com.study.resttemplatetest.model.BeerStyle;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -13,25 +12,25 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class BeerClientImpl implements BeerClient {
 
     public static final String BEER_PATH = "/api/v1/beer";
-    public static final String GET_BEER_BY_ID_PATH = BEER_PATH + "/{beerId}";
+    public static final String BEER_ID_PATH = BEER_PATH + "/{beerId}";
 
-    private final RestTemplateBuilder restTemplateBuilder;
+    private final RestTemplate restTemplate;
+
+    public BeerClientImpl(RestTemplateBuilder restTemplateBuilder) {
+        restTemplate = restTemplateBuilder.build();
+    }
 
     @Override
     public BeerDto getBeerById(UUID beerId) {
-        var restTemplate = restTemplateBuilder.build();
-
-        return restTemplate.getForObject(GET_BEER_BY_ID_PATH, BeerDto.class, beerId);
+        return restTemplate.getForObject(BEER_ID_PATH, BeerDto.class, beerId);
     }
 
     @Override
     public Page<BeerDto> getAllBeers(String beerName, BeerStyle beerStyle, Boolean showInventory,
                                      Integer pageNumber, Integer pageSize) {
-        var restTemplate = restTemplateBuilder.build();
         var uriComponentsBuilder = UriComponentsBuilder.fromPath(BEER_PATH);
 
         buildQueryParam(uriComponentsBuilder, beerName, beerStyle, showInventory, pageNumber, pageSize);
@@ -68,7 +67,6 @@ public class BeerClientImpl implements BeerClient {
 
     @Override
     public BeerDto createBeer(BeerDto beerDto) {
-        RestTemplate restTemplate = restTemplateBuilder.build();
         var uri = restTemplate.postForLocation(BEER_PATH, beerDto);
 
         return restTemplate.getForObject(uri.getPath(), BeerDto.class);
@@ -76,16 +74,14 @@ public class BeerClientImpl implements BeerClient {
 
     @Override
     public BeerDto updateBeer(BeerDto newBeerDto) {
-        RestTemplate restTemplate = restTemplateBuilder.build();
-        restTemplate.put(GET_BEER_BY_ID_PATH, newBeerDto, newBeerDto.getId());
+        restTemplate.put(BEER_ID_PATH, newBeerDto, newBeerDto.getId());
 
         return getBeerById(newBeerDto.getId());
     }
 
     @Override
     public void deleteBeer(UUID beerId) {
-        RestTemplate restTemplate = restTemplateBuilder.build();
-        restTemplate.delete(GET_BEER_BY_ID_PATH, beerId);
+        restTemplate.delete(BEER_ID_PATH, beerId);
     }
 
     private void buildQueryParam(UriComponentsBuilder uriComponentsBuilder, String beerName, BeerStyle beerStyle, Boolean showInventory, Integer pageNumber, Integer pageSize) {
