@@ -11,7 +11,12 @@ class BeerClientImplTest {
     private BeerClient beerClient;
 
     @Test
-    void getAllBeers() {
-        beerClient.getAllBeers();
+    void testGetAllBeersWithBeerName() {
+        beerClient.getAllBeers("ALE");
+    }
+
+    @Test
+    void testGetAllBeersWithNoBeerName() {
+        beerClient.getAllBeers(null);
     }
 }
