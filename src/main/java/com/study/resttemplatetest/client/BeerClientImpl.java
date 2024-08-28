@@ -74,6 +74,14 @@ public class BeerClientImpl implements BeerClient {
         return restTemplate.getForObject(uri.getPath(), BeerDto.class);
     }
 
+    @Override
+    public BeerDto updateBeer(BeerDto newBeerDto) {
+        RestTemplate restTemplate = restTemplateBuilder.build();
+        restTemplate.put(GET_BEER_BY_ID_PATH, newBeerDto, newBeerDto.getId());
+
+        return getBeerById(newBeerDto.getId());
+    }
+
     private void buildQueryParam(UriComponentsBuilder uriComponentsBuilder, String beerName, BeerStyle beerStyle, Boolean showInventory, Integer pageNumber, Integer pageSize) {
         if (beerName != null) {
             uriComponentsBuilder.queryParam("beerName", beerName);

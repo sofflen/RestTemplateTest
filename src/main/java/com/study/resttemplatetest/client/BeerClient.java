@@ -24,4 +24,6 @@ public interface BeerClient {
                               Integer pageNumber, Integer pageSize);
 
     BeerDto createBeer(BeerDto beerDto);
+
+    BeerDto updateBeer(BeerDto newBeerDto);
 }
