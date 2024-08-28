@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.UUID;
@@ -63,6 +64,14 @@ public class BeerClientImpl implements BeerClient {
     @Override
     public Page<BeerDto> getAllBeers(Integer pageNumber, Integer pageSize) {
         return getAllBeers(null, null, null, pageNumber, pageSize);
+    }
+
+    @Override
+    public BeerDto createBeer(BeerDto beerDto) {
+        RestTemplate restTemplate = restTemplateBuilder.build();
+        var uri = restTemplate.postForLocation(BEER_PATH, beerDto);
+
+        return restTemplate.getForObject(uri.getPath(), BeerDto.class);
     }
 
     private void buildQueryParam(UriComponentsBuilder uriComponentsBuilder, String beerName, BeerStyle beerStyle, Boolean showInventory, Integer pageNumber, Integer pageSize) {

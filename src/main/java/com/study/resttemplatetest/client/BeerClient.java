@@ -22,4 +22,6 @@ public interface BeerClient {
 
     Page<BeerDto> getAllBeers(String beerName, BeerStyle beerStyle, Boolean showInventory,
                               Integer pageNumber, Integer pageSize);
+
+    BeerDto createBeer(BeerDto beerDto);
 }
