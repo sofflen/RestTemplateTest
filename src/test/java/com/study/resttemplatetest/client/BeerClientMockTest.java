@@ -6,6 +6,7 @@ import com.study.resttemplatetest.config.RestTemplateBuilderConfig;
 import com.study.resttemplatetest.model.BeerDto;
 import com.study.resttemplatetest.model.BeerDtoPage;
 import com.study.resttemplatetest.model.BeerStyle;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import static com.study.resttemplatetest.client.BeerClientImpl.BEER_ID_PATH;
 import static com.study.resttemplatetest.client.BeerClientImpl.BEER_PATH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.queryParam;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -67,6 +69,7 @@ public class BeerClientMockTest {
         var response = objectMapper.writeValueAsString(getPage());
 
         mockRestServiceServer.expect(method(HttpMethod.GET))
+                .andExpect(header("Authorization", Matchers.any(String.class)))
                 .andExpect(requestTo(URL + BEER_PATH))
                 .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
 
