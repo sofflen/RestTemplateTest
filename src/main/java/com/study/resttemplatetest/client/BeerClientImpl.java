@@ -1,10 +1,10 @@
 package com.study.resttemplatetest.client;
 
 import com.study.resttemplatetest.model.BeerDto;
-import com.study.resttemplatetest.model.BeerDtoPage;
+import com.study.resttemplatetest.model.BeerDtoPagedModel;
 import com.study.resttemplatetest.model.BeerStyle;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -29,40 +29,25 @@ public class BeerClientImpl implements BeerClient {
     }
 
     @Override
-    public Page<BeerDto> getAllBeers(String beerName, BeerStyle beerStyle, Boolean showInventory,
+    public PagedModel<BeerDto> getAllBeers(String beerName, BeerStyle beerStyle, Boolean showInventory,
                                      Integer pageNumber, Integer pageSize) {
         var uriComponentsBuilder = UriComponentsBuilder.fromPath(BEER_PATH);
 
         buildQueryParam(uriComponentsBuilder, beerName, beerStyle, showInventory, pageNumber, pageSize);
 
-        var pageResponseEntity = restTemplate.getForEntity(uriComponentsBuilder.toUriString(), BeerDtoPage.class);
+        var pageResponseEntity = restTemplate.getForEntity(uriComponentsBuilder.toUriString(), BeerDtoPagedModel.class);
 
         return pageResponseEntity.getBody();
     }
 
     @Override
-    public Page<BeerDto> getAllBeers() {
+    public PagedModel<BeerDto> getAllBeers() {
         return getAllBeers(null, null, null, null, null);
     }
 
     @Override
-    public Page<BeerDto> getAllBeers(String beerName) {
+    public PagedModel<BeerDto> getAllBeers(String beerName) {
         return getAllBeers(beerName, null, null, null, null);
-    }
-
-    @Override
-    public Page<BeerDto> getAllBeers(String beerName, BeerStyle beerStyle) {
-        return getAllBeers(beerName, beerStyle, null, null, null);
-    }
-
-    @Override
-    public Page<BeerDto> getAllBeers(String beerName, BeerStyle beerStyle, Boolean showInventory) {
-        return getAllBeers(beerName, beerStyle, showInventory, null, null);
-    }
-
-    @Override
-    public Page<BeerDto> getAllBeers(Integer pageNumber, Integer pageSize) {
-        return getAllBeers(null, null, null, pageNumber, pageSize);
     }
 
     @Override
