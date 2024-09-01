@@ -10,10 +10,14 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.math.BigDecimal;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/**
+ * For these tests to run, Authorization Server and Resource Server should be deployed
+ */
 @SpringBootTest
 class BeerClientImplTest {
 
@@ -29,12 +33,16 @@ class BeerClientImplTest {
 
     @Test
     void testGetAllBeersWithBeerName() {
-        beerClient.getAllBeers("ALE");
+        var beerPagedModel = beerClient.getAllBeers("ALE");
+
+        assertThat(beerPagedModel.getContent()).isNotEmpty();
     }
 
     @Test
     void testGetAllBeersWithNoBeerName() {
-        beerClient.getAllBeers(null);
+        var beerPagedModel = beerClient.getAllBeers(null);
+
+        assertThat(beerPagedModel.getContent()).isNotEmpty();
     }
 
     @Test
@@ -87,9 +95,11 @@ class BeerClientImplTest {
                 .build();
 
         var savedDto = beerClient.createBeer(newBeerDto);
+        var savedDtoId = savedDto.getId();
 
-        beerClient.deleteBeer(savedDto.getId());
+        beerClient.deleteBeer(savedDtoId);
 
-        assertThrows(HttpClientErrorException.class, () -> beerClient.getBeerById(savedDto.getId()));
+        assertThrows(HttpClientErrorException.class, () ->
+                beerClient.getBeerById(savedDtoId));
     }
 }
